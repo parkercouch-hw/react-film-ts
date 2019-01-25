@@ -1,25 +1,48 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import * as React from 'react';
 import './App.css';
 
-class App extends Component {
-  render() {
+import FilmDetails from './components/FilmDetails';
+import FilmListing from './components/FilmListing';
+
+import { IFilm, ITMDB} from './Types';
+
+import TMDB from './TMDB';
+
+export interface IAppProps {
+  placeholder?: any;
+}
+
+interface IAppState {
+  current: IFilm | {};
+  films: IFilm[];
+}
+
+class App extends React.Component<IAppProps, IAppState> {
+  public readonly state: IAppState = {
+    current: {},
+    films: TMDB.films,
+  };
+
+  public handleDetailsClick = (film: IFilm) => {
+    const current = film;
+    console.log('Fetching details for', film.title);
+    this.setState({
+      current,
+    });
+  }
+
+  public render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <div className="film-libarary">
+          <FilmListing
+            films={this.state.films}
+            handleDetailsClick={this.handleDetailsClick}
+          />
+          <FilmDetails
+            film={this.state.current}
+          />
+        </div>
       </div>
     );
   }
