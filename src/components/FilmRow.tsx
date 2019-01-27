@@ -3,33 +3,30 @@ import { IFilm } from '../Types';
 import Fave from './Fave';
 import FilmPoster from './FilmPoster';
 
-export interface IFilmRowProps {
+interface IFilmRowProps {
   film: IFilm;
   onFaveToggle: (film: IFilm) => void;
   handleDetailsClick: (film: IFilm) => void;
   isFave: boolean;
 }
 
-class FilmRow extends React.Component<IFilmRowProps, any> {
+const FilmRow: React.SFC<IFilmRowProps> = (props) => {
+  const year: number = new Date(props.film.release_date).getFullYear();
 
-  public render() {
-    const year: number = new Date(this.props.film.release_date).getFullYear();
+  return (
+    <div className="film-row" onClick={() => props.handleDetailsClick(props.film)}>
+      <FilmPoster poster_path={props.film.poster_path} />
 
-    return (
-      <div className="film-row" onClick={() => this.props.handleDetailsClick(this.props.film)}>
-        <FilmPoster poster_path={this.props.film.poster_path} />
-
-        <div className="film-summary">
-          <h1>{this.props.film.title}</h1>
-          <p>{year}</p>
-        </div>
-        <Fave
-          onFaveToggle={() => this.props.onFaveToggle(this.props.film)}
-          isFave={this.props.isFave}
-        />
+      <div className="film-summary">
+        <h1>{props.film.title}</h1>
+        <p>{year}</p>
       </div>
-    );
-  }
-}
+      <Fave
+        onFaveToggle={() => props.onFaveToggle(props.film)}
+        isFave={props.isFave}
+      />
+    </div>
+  );
+};
 
 export default FilmRow;

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import './App.css';
 
 import FilmDetails from './components/FilmDetails';
 import FilmListing from './components/FilmListing';
 
-import { IFilm, ITMDB} from './Types';
+import { IFilm, MaybeFilm } from './Types';
 
 import TMDB from './TMDB';
 
@@ -13,19 +12,30 @@ export interface IAppProps {
 }
 
 interface IAppState {
-  current: IFilm | {};
+  current: MaybeFilm;
   films: IFilm[];
 }
 
 class App extends React.Component<IAppProps, IAppState> {
   public readonly state: IAppState = {
-    current: {},
+    current: null,
     films: TMDB.films,
   };
 
   public handleDetailsClick = (film: IFilm) => {
     const current = film;
     console.log('Fetching details for', film.title);
+    const url =
+      `https://api.themoviedb.org/3/movie/${film.id}` +
+      `?api_key=${TMDB.api_key}` +
+      '&append_to_response=videos,images&language=en';
+
+    fetch(url).then((response) => {
+      response.json().then((data) => {
+        console.log(data);
+      });
+    });
+
     this.setState({
       current,
     });
@@ -34,7 +44,7 @@ class App extends React.Component<IAppProps, IAppState> {
   public render() {
     return (
       <div className="App">
-        <div className="film-libarary">
+        <div className="film-library">
           <FilmListing
             films={this.state.films}
             handleDetailsClick={this.handleDetailsClick}
